@@ -20,6 +20,7 @@ abstract class ThriveCalendarLogic
     /** @var ThriveDate **/
     protected $date;
 
+    // M: Where is the ThriveDate class?
     public function __construct(ThriveDate $date)
     {
         
@@ -30,13 +31,16 @@ abstract class ThriveCalendarLogic
     * @return int
     */
     public function getEpochTime();
+    public function getNumberOfDaysInMonth();
 }
 
+// M: Is there supposed to be an 'f' here?
 class ThriveDate extends fDate
 {
     /** @var ThriveCalendarLogic **/
     private $calendarLogic;
 
+    // M: ThriveYear, ThriveMonth, and ThriveDay look like classes.
     /** @var ThriveYear **/
     private $year;
     
@@ -46,13 +50,17 @@ class ThriveDate extends fDate
     /** @var ThriveDay **/
     private $day;
 
-    public function __construct(ThriveYear $year, ThriveMonth $month, ThriveDay $day, ThriveCalendarLogic $calendarLogic = null)
+    public function __construct($calendarLogic = null)
     {
-        $this->year  = $year;
-        $this->month = $month;
-        $this->day   = $day;
+        $this->year = new ThriveYear();
+        $this->month = new ThriveMonth();
+        $this->day =  new ThriveDay();
+                
+       // $this->year  = $year;
+       // $this->month = $month;
+       // $this->day   = $day;
 
-        // Assume calendarLogic defaults to Gregorian:
+        // * Assume calendarLogic defaults to Gregorian:
         if ($calendarLogic === null)
         {
             $calendarLogic = new ThriveCalendar_GregorianLogic;
@@ -82,7 +90,18 @@ class ThriveCalendar_GregorianLogic extends ThriveCalendarLogic
 {
     public function getEpochTime()
     {
-        return 
+        // M: U is the format char for epoch
+        return date(j, U);
+    }
+    public function __construct(ThriveMonth $month)
+    {
+        $numberOfDays = $this->numberOfDaysInMonth($month);
+        {
+            for ($d = 1; $d <= $numberOfDays; ++$d)
+            {
+                $this->days[$d] = new Day;
+            }
+        }
     }
 }
 
@@ -90,4 +109,5 @@ class LunarCalendarLogic
 {
     
 }
+
 
