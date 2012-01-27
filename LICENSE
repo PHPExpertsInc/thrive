@@ -1,0 +1,22 @@
+The Thrive Framework is licensed under two licenses. It is NOT dual licensed in
+the traditional sense that one may pick and choose which license they wish to 
+abide by: 
+
+    YOU MUST ABIDE BY BOTH LICENSES SIMULTANEOUSLY.
+
+The licenses are
+* The Creative Commons Attribution License v3.0 (CC-BY_A)
+  This license gives the rights to copy, modify and distribute this source
+  code for your own projects, and to compile it into your projects. It does
+  not require you to open source your own code (as a copyleft license would).
+
+  All that is required is for you to provide proper attribution that your
+  project includes code from the Thrive Framework and links to the URL
+  http://www.phpexperts.pro/thrive.
+
+* The Open Source Software Alliance License v1.0 (OSSAL)
+  This license *must* be included with any distribution of the source code.
+  It prohibits the mixing of this package's code with a copyleft project,
+  such as those licensed under the GPL, LGPL, or Creative Commons ShareAlike
+  licenses.
+
