@@ -43,6 +43,11 @@ class Thrive_BitPrefs
 	{
 		return ($this->prefsMask & $pref) === $pref;
 	}
+	
+	public function isOff($pref)
+	{
+		return !$this->isOn($pref);
+	}
 
 	public function turnOn($pref)
 	{
