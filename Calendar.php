@@ -28,7 +28,7 @@
 //             PHPExperts.pro (www.phpexperts.pro).", wherever you list contributors.
 //   * See LICENSE.cc_by for complete details.
 
-abstract class ThriveCalendarLogic
+abstract class Thrive_CalendarLogic
 {
     /** @var ThriveDate **/
     protected $date;
@@ -50,7 +50,7 @@ abstract class ThriveCalendarLogic
 // T: Yes, it is derived from my associate's Flourish library's fDate class.
 class ThriveDate extends fDate
 {
-    /** @var ThriveCalendarLogic **/
+    /** @var Thrive_CalendarLogic **/
     private $calendarLogic;
 
     /** @var ThriveYear **/         
@@ -75,7 +75,7 @@ class ThriveDate extends fDate
         // Assume calendarLogic defaults to Gregorian:
         if ($calendarLogic === null)
         {
-            $calendarLogic = new ThriveCalendar_GregorianLogic;
+            $calendarLogic = new Thrive_Calendar_GregorianLogic;
         }
 
         $this->date = strtotime("$year-$month-$day");
@@ -84,12 +84,12 @@ class ThriveDate extends fDate
     }
 }
 
-class ThriveCalendar
+class Thrive_Calendar
 {
-    /** @var ThriveCalendarLogice **/
+    /** @var Thrive_CalendarLogice **/
     private $lineLogic;
 
-    public function __construct(ThriveCalendarLogic $calendarLogic, $dateString)
+    public function __construct(Thrive_CalendarLogic $calendarLogic, $dateString)
     {
         $calendarLogic-
         $this->year = $year;
@@ -98,7 +98,7 @@ class ThriveCalendar
     
 }
 
-class ThriveCalendar_GregorianLogic extends ThriveCalendarLogic
+class Thrive_Calendar_GregorianLogic extends Thrive_CalendarLogic
 {
     public function getEpochTime()
     {
