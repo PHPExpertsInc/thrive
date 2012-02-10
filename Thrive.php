@@ -27,6 +27,8 @@
 //             PHPExperts.pro (www.phpexperts.pro).", wherever you list contributors.
 //   * See LICENSE.cc_by for complete details.
 
+require 'Autoloader.php';
+
 class Thrive
 {
 	public static function init(Thrive_Autoloader $ta = null)

@@ -93,7 +93,7 @@ class Thrive_Autoloader
 	protected function getAutoMapFilename()
 	{
 		$appName = basename($_SERVER['PHP_SELF']);
-		return sys_get_temp_dir() . '/' . $appName . '-autoload.map';
+		return sys_get_temp_dir() . '/autoload-' . $appName . '.map';
 	}
 }
 
@@ -122,7 +122,7 @@ class Thrive_ClassLocator
 
 		// 2. See if it exists in the main directory.
 		$try1 = $noSuffix . '.php';
-		echo "Try 1: $try1\n";
+		//echo "Try 1: $try1\n";
 		if (file_exists($try1))
 		{
 			return $try1;
@@ -131,7 +131,7 @@ class Thrive_ClassLocator
 		// 3. See if it's in a sub directory.
 		$pieces = explode('_', $try1);
 		$try2 = join ('/', $pieces);
-		echo "Try 2: $try2\n";
+		//echo "Try 2: $try2\n";
 		if (file_exists($try2))
 		{
 			return $try2;
