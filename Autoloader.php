@@ -107,6 +107,13 @@ class Thrive_ClassLocator
 			return $filename;
 		}
 
+		// Search Thrive library first.
+		if (($filename = $this->searchFilesystemForClass($className, dirname(__FILE__))) !== false)
+		{
+			return $filename;
+		}
+
+		// Search the current working directory second.
 		if (($filename = $this->searchFilesystemForClass($className, getcwd())) !== false)
 		{
 			return $filename;
