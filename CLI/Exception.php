@@ -29,9 +29,10 @@
   
 class Thrive_CLI_Exception extends LogicException
 {
+	const HELP_REQUESTED       = 101;
 	const OPTIONCFG_NOT_STRING = 'CLI options must be strings.';
-	const MISSING_REQ_OPTION = 'missing required option %s.';
-	const MISSING_REQ_VALUE = 'missing required value for %s.';
-	const UNRECOGNIZED_OPTION = 'unrecognized option(s) %s.';
+	const MISSING_REQ_OPTION   = 'missing required option %s.';
+	const MISSING_REQ_VALUE    = 'missing required value for %s.';
+	const UNRECOGNIZED_OPTION  = 'unrecognized option(s) %s.';
 }
 

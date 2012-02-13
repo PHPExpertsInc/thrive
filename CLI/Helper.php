@@ -71,6 +71,11 @@ class Thrive_CLI_Helper
 		}
 		catch (Thrive_CLI_Exception $e)
 		{
+			if ($e->getCode() == Thrive_CLI_Exception::HELP_REQUESTED)
+			{
+				throw $e;
+			}
+
 			printf("Error: %s\n", $e->getMessage());
 			printf("Try '%s --help' for more information.\n", $argv[0]);
 			die(1);
@@ -141,6 +146,12 @@ class Thrive_CLI_Helper
 
 	protected function validateParams(array $params, array $options, $strictness)
 	{
+		// See if -h or --help have been issued.
+		if (array_key_exists('help', $params) || array_key_exists('h', $params))
+		{
+			throw new Thrive_CLI_Exception('Help requested', Thrive_CLI_Exception::HELP_REQUESTED);
+		}
+
 		foreach ($options as /** @var Thrive_CLI_Option **/ $o)
 		{
 			$arg = ((strlen($o->name) == 1) ? '-' : '--') . $o->name;
