@@ -39,33 +39,41 @@ require_once realpath(dirname(__FILE__) . '/../Thrive.php');
 
 Thrive::init();
 
+function showHelp()
+{
+	print "Thrive's Handle Command Line Arguments in PHP Demo\n";
+	print "Copyright (c) Theodore R. Smith <theodore@phpexperts.pro>\n";
+	print "Built on the Thrive and Flourish frameworks.\n\n";
+	print "Arguments:\n";
+	print "   -h or --help\t\tDisplay this help and exit.\n";
+	print "   --host <host>\t[Required] Sets the SQL server hostname.\n";
+	print "   --user <user>\tSets the SQL server username [default: 'root'].\n";
+	print "   --pass <pass>\tSets the SQL server password [default: ''].\n";
+	print "   --database <db>\t[Required] Sets the SQL server database.\n";
+	print "   --exclude <pattern>\tExclude files matching PATTERN.\n";
+	print "   --debug\t\tShow debugging info.\n";
+	print "   --verbose [x]\tIncrease verbosity [optionally by X amount].\n";
+	print "\n";
+	print "\nTry running \n";
+	print "  \$ ./handle_cli_args.php --host localhost --database wordpress --exclude a --exclude b --exclude c --host a --user=foo\n";
+}
+
 $cli = new Thrive_CLI_Helper;
 // Long options are based on PERL's CommandLine_Parse syntax.
 $longOpts = array('!host=', 'user=', 'pass=', '!database=', 'filter=', 'verbose:', 'debug', 'exclude@');
-$params = $cli->getCliParams($longOpts);
-print_r($params);
-exit;
-/*if (empty($args) || PEAR::isError($args))
+try
 {
-	echo "manage_sql.php: missing argument: database\n";
-	echo "manage_sql.php: This argument will determine which database the changes apply to.\n";
-	die(1);
-}*/
-
-$database = $argv[1];
-//user=root
-//pass=w0rdpr3ss
-$pdo = new PDO('mysql:host=DTMySQLDev.chron.com;dbname=wordpress_mu', 'wpmuadmin', 'D9eu3!jk0z');
-$stmt = $pdo->query("SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_NAME LIKE 'wp_%_options'");
-$tables = $stmt->fetchAll(PDO::FETCH_COLUMN);
-
-
-//print_r($tables);
-foreach ($tables as $table)
+	$params = $cli->getCliParams($longOpts);
+}
+catch (Thrive_CLI_Exception $e)
 {
-	$stmt = $pdo->query(sprintf("SELECT option_value FROM %s WHERE option_name='ngg_db_version'", $table));
-	$ngg_version = $stmt->fetchColumn();
-	echo "$table - ngg_db_version: $ngg_version\n";
+	if ($e->getCode() == Thrive_CLI_Exception::HELP_REQUESTED)
+	{
+		showHelp();
+		die(1);
+	}
 }
 
+print "Value of passed CLI params:\n";
+print_r($params);
 
