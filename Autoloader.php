@@ -99,8 +99,13 @@ class Thrive_Autoloader
 
 	protected function getAutoMapFilename()
 	{
-		$appName = basename($_SERVER['PHP_SELF']);
-		return sys_get_temp_dir() . '/autoload-' . $appName . '.map';
+		static $filename;
+
+		if ($filename !== null) { return $filename; }
+
+		$appHash = md5($_SERVER['PHP_SELF']);
+		$filename = sys_get_temp_dir() . '/autoload-' . $appHash . '.map';
+		return $filename;
 	}
 }
 
