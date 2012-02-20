@@ -63,7 +63,7 @@ $cli = new Thrive_CLI_Helper;
 $longOpts = array('!host=', 'user=', 'pass=', '!database=', 'filter=', 'verbose:', 'debug', 'exclude@');
 try
 {
-	$params = $cli->getCliParams($longOpts);
+	$params = $cli->getParams($longOpts);
 }
 catch (Thrive_CLI_Exception $e)
 {

@@ -50,7 +50,7 @@ class Thrive_CLI_Helper
 	 * @param int $strictness
 	 * @return array of parameters
 	**/
-	public function getCliParams(array $optionCfgs, $strictness = self::STRICT_OPTIONS)
+	public function getParams(array $optionCfgs, $strictness = self::STRICT_OPTIONS)
 	{
 		global $argv;
 
