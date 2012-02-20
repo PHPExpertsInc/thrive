@@ -72,7 +72,14 @@ class Thrive_Autoloader
 
 	public function autoload($className)
 	{
-		require_once $this->findClassInMap($className);
+		$filename = $this->findClassInMap($className);
+		if (!file_exists($filename))
+		{
+			echo "Error: Could not find file '$filename' for class '$className'.\n";
+			die(1);
+		}
+
+		include_once $filename;
 	}
 
 	protected function findClassInMap($className)

@@ -35,6 +35,9 @@ class Thrive_CLI_Helper
 	/** @var Thrive_CLI_OptionFactory **/
 	protected $op;
 
+	/** @var bool Determines whether unknown options throw an exception or not. **/
+	protected $strictness = null;
+
 	/**
 	 * @param Thrive_CLI_OptionFactory $optionFactory
 	 * @return Thrive_CLI_Helper
@@ -44,26 +47,57 @@ class Thrive_CLI_Helper
 		if ($optionFactory === null) { $optionFactory = new Thrive_CLI_OptionFactory; }
 		$this->op = $optionFactory;
 	}
-	
+
+	public function useStrictOptions()
+	{
+		$this->strictness = self::STRICT_OPTIONS;
+	}
+
+	public function useLooseOptions()
+	{
+		$this->strictness = self::LOOSE_OPTIONS;
+	}
+
 	/**
 	 * @param [requiredOptions] array of required options. Uses the Getopt syntax.
-	 * @param int $strictness
 	 * @return array of parameters
 	**/
-	public function getParams(array $optionCfgs, $strictness = self::STRICT_OPTIONS)
+	public function getParams(array $optionCfgs = null)
 	{
-		global $argv;
+		if ($this->strictness === null)
+		{
+			if (!empty($optionCfgs))
+			{
+				$this->strictness = self::STRICT_OPTIONS;
+			}
+			else
+			{
+				$this->strictness = self::LOOSE_OPTIONS;
+			}
+		}
+
+		if ($this->strictness == self::STRICT_OPTIONS && empty($optionCfgs))
+		{
+			throw new Thrive_CLI_Exception(Thrive_CLI_Exception::OPTIONCFG_MISSING);
+		}
+
+		$argv = $GLOBALS['argv'];
 
 		$params = array();
-		$params = $GLOBALS['argv'];
+		$params = $argv;
 		array_shift($params);
 
 		$params = $this->processParams($params);
+		if (empty($optionCfgs))
+		{
+			return $params;
+		}
+
 		$options = $this->op->buildInBulk($optionCfgs);
 
 		try
 		{
-			$this->validateParams($params, $options, $strictness);
+			$this->validateParams($params, $options);
 			$this->cullUnusedOptions($options);
 			$params = $this->convertToArray($options);
 			//foreach ($options as $o) { echo "$o\n"; }
@@ -144,7 +178,7 @@ class Thrive_CLI_Helper
 		return $params;
 	}
 
-	protected function validateParams(array $params, array $options, $strictness)
+	protected function validateParams(array $params, array $options)
 	{
 		// See if -h or --help have been issued.
 		if (array_key_exists('help', $params) || array_key_exists('h', $params))
@@ -196,12 +230,16 @@ class Thrive_CLI_Helper
 		}
 
 		// Make sure the provided parameters are valid.
-		if ($strictness == Thrive_CLI_Helper::STRICT_OPTIONS && !empty($params))
+		if ($this->strictness == Thrive_CLI_Helper::STRICT_OPTIONS && !empty($params))
 		{
 			$invalidParams = array_keys($params);
 			$invalidOptions = '--' . join(', --', $invalidParams);
 
 			throw new Thrive_CLI_Exception(sprintf(Thrive_CLI_Exception::UNRECOGNIZED_OPTION, $invalidOptions));
+		}
+		else
+		{
+			echo "Strictness: " . $this->strictness . "\n";
 		}
 	}
 
