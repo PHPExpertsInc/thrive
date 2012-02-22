@@ -74,7 +74,7 @@ class Thrive_CLI_OptionFactory
 		$options = array();
 		foreach ($optionCfgs as $optionCfg)
 		{
-			if (!is_string($optionCfg)) { throw new Thrive_CLI_Exception(Thrive_CLI_Exception::OPTIONCFG_NOT_STRING); }
+			if (!is_string($optionCfg) || empty($optionCfg)) { throw new Thrive_CLI_Exception(Thrive_CLI_Exception::OPTIONCFG_NOT_STRING); }
 
 			$option = $this->build($optionCfg);
 			//print_r($option);
@@ -83,7 +83,6 @@ class Thrive_CLI_OptionFactory
 
 		return $options;
 	}
-
 	
 	protected function getOptionName($optionCfg)
 	{		
