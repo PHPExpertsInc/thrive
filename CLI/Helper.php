@@ -245,7 +245,8 @@ class Thrive_CLI_Helper
 	protected function cullUnusedOptions(&$options)
 	{
 		$filterEmptyOptions = create_function('$option', 'return (!empty($option->value));');
-		$options = array_filter($options, $filterEmptyOptions);
+		$options = array_values(array_filter($options, $filterEmptyOptions));
+		
 	}
 
 	protected function convertToArray($options)
