@@ -101,7 +101,6 @@ class Thrive_CLI_Helper
 			$this->cullUnusedOptions($options);
 			$params = $this->convertToArray($options);
 			//foreach ($options as $o) { echo "$o\n"; }
-			//print_r($options);
 		}
 		catch (Thrive_CLI_Exception $e)
 		{
@@ -174,11 +173,10 @@ class Thrive_CLI_Helper
 			}
 		}
 
-		//print_r($params); exit;
 		return $params;
 	}
 
-	protected function validateParams(array $params, array $options)
+	protected function validateParams(array $params, array &$options)
 	{
 		// See if -h or --help have been issued.
 		if (array_key_exists('help', $params) || array_key_exists('h', $params))
@@ -206,7 +204,6 @@ class Thrive_CLI_Helper
 				throw new Thrive_CLI_Exception(sprintf(Thrive_CLI_Exception::MISSING_REQ_VALUE, $arg));
 			}
 
-			//if (isset($params[$o->name]))
 			if (array_key_exists($o->name, $params))
 			{
 				if (is_array($params[$o->name]))
@@ -228,6 +225,18 @@ class Thrive_CLI_Helper
 				unset($params[$o->name]);
 			}
 		}
+
+		// Handle extra params.
+		if (isset($params['.extra']))
+		{
+			foreach ($params['.extra'] as $i => $param)
+			{
+				$o = new Thrive_CLI_Option(".extra$i", $param);
+				$options[] = $o;
+			}
+		}
+
+		unset($params['.extra']);
 
 		// Make sure the provided parameters are valid.
 		if ($this->strictness == Thrive_CLI_Helper::STRICT_OPTIONS && !empty($params))
