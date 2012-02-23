@@ -131,7 +131,7 @@ class Thrive_CLI_Helper
 
 			if (!$isOption)
 			{
-				@$params['.extra'] .= $param . ' ';
+				$params['.extra'][] = $param;
 				continue;
 			}
 
@@ -236,10 +236,6 @@ class Thrive_CLI_Helper
 			$invalidOptions = '--' . join(', --', $invalidParams);
 
 			throw new Thrive_CLI_Exception(sprintf(Thrive_CLI_Exception::UNRECOGNIZED_OPTION, $invalidOptions));
-		}
-		else
-		{
-			echo "Strictness: " . $this->strictness . "\n";
 		}
 	}
 
