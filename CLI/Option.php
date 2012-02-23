@@ -45,10 +45,15 @@ class Thrive_CLI_Option extends Thrive_BitPrefs
 
 	public function __construct($name, $value = null, $prefsMask = 0)
 	{
-		$this->name = $name;
-		$this->value = $value;
-
 		parent::__construct($prefsMask);
+
+		$this->name = $name;
+
+		if ($value !== null)
+		{
+			$this->value = $value;
+			$this->turnOn(self::HAS_A_VALUE);
+		}
 	}
 
 	public function __toString()
