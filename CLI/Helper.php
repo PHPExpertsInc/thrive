@@ -221,7 +221,12 @@ class Thrive_CLI_Helper
 				{
 					$o->value = $params[$o->name];
 				}
-				
+
+				if (empty($params[$o->name]))
+				{
+					$o->value = true;
+				}
+
 				unset($params[$o->name]);
 			}
 		}
