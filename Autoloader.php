@@ -73,13 +73,13 @@ class Thrive_Autoloader
 	public function autoload($className)
 	{
 		$filename = $this->findClassInMap($className);
-		if (!file_exists($filename))
+		if (!is_readable($filename))
 		{
 			echo "Error: Could not find file '$filename' for class '$className'.\n";
 			die(1);
 		}
 
-		include_once $filename;
+		include $filename;
 	}
 
 	protected function findClassInMap($className)
@@ -142,7 +142,7 @@ class Thrive_ClassLocator
 		// 2. See if it exists in the main directory.
 		$try1 = $noSuffix . '.php';
 		//echo "Try 1: $try1\n";
-		if (file_exists($try1))
+		if (is_readable($try1))
 		{
 			return $try1;
 		}
@@ -151,7 +151,7 @@ class Thrive_ClassLocator
 		$pieces = explode('_', $try1);
 		$try2 = join ('/', $pieces);
 		//echo "Try 2: $try2\n";
-		if (file_exists($try2))
+		if (is_readable($try2))
 		{
 			return $try2;
 		}
