@@ -34,7 +34,7 @@ class Thrive_Autoloader
 	// Singleton :/
 	private static $instantiated = false;
 
-	/** @var fCacher **/
+	/** @var fCache **/
 	protected $cacher;
 
 	/** @var Thrive_ClassLocator **/
@@ -46,6 +46,7 @@ class Thrive_Autoloader
 	public function __construct(fCache $cacher = null, Thrive_ClassLocator $cloc = null)
 	{
 		if (self::$instantiated !== false) return self::$instantiated;
+
 		if ($cacher === null)
 		{
 			$cacher = new fCache('file', $this->getAutoMapFilename());
@@ -67,7 +68,10 @@ class Thrive_Autoloader
 	{
 		//echo "Saving class map...\n";
 		if ($this->cacher !== null)
+		{
+			$this->cacher->set('classMap', $this->classMap);
 			$this->cacher->save();
+		}
 	}
 
 	public function autoload($className)
@@ -92,7 +96,6 @@ class Thrive_Autoloader
 
 		$filename = $this->cloc->findClassFile($className);
 		$this->classMap[$className] = $filename;
-		$this->cacher->set('classMap', $this->classMap);
 
 		return $filename;
 	}
