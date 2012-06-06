@@ -215,16 +215,15 @@ class Thrive_ClassLocator
 		$count = count($tokens);
 		for ($i = 2; $i < $count; $i++)
 		{
-			if ($tokens[$i - 2][0] == T_CLASS
+			if (in_array($tokens[$i - 2][0], array(T_CLASS, T_ABSTRACT, T_INTERFACE))
 			    && $tokens[$i - 1][0] == T_WHITESPACE
 			    && $tokens[$i][0] == T_STRING)
 			{
 				$class_name = $tokens[$i][1];
-				$classes[] = $class_name;
+				$classes[$class_name] = $filename;
 			}
 		}
 
-		$foundClasses[$filename] = $classes;
 		return $classes;
 	}
 }
