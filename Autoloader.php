@@ -95,9 +95,9 @@ class Thrive_Autoloader
 
 	protected function findClassInMap($className)
 	{
-		if (isset($this->classMap[$className]))
+		if (!empty($this->classMap[$className]))
 		{
-			//echo "Found in internal class map...\n";
+			//echo "Found $className in internal class map at {$this->classMap[$className]}\n";
 			return $this->classMap[$className];
 		}
 
@@ -171,10 +171,14 @@ class Thrive_ClassLocator
 
 	protected function searchFilesystemForClass($className, $path)
 	{
+		static $classes = array();
+
 		//echo "Searching directory $path for the class $className...\n";
 		$it = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path));
-		foreach ($it as /** @var DirectoryIterator **/ $fileinfo)
+		/** @var RecursiveDirectoryIterator $it */
+		foreach ($it as $fileinfo)
 		{
+			/** @var DirectoryIterator $fileinfo **/
 			//$filename = $it->getFilename();
 			$filename = $it->getPathname();
 			$basename = $it->getFilename();
@@ -183,13 +187,16 @@ class Thrive_ClassLocator
 			if ($fileinfo->getExtension() == 'php')
 			{
 				//echo "Searching for class $className in $filename...\n";
-				$classes = $this->findClassNamesInFile($filename);
-				if (empty($classes)) { continue; }
-				
-				if (in_array($className, $classes))
+				$foundClasses = $this->findClassNamesInFile($filename);
+				if (empty($foundClasses)) { continue; }
+
+				$classes = array_merge($classes, $foundClasses);
+				//print_r($classes);
+				//if (in_array($className, $classes))
+				if (!empty($classes[$className]))
 				{
-					//echo "Found class $className in $filename!!\n";
-					return $filename;
+					//echo "Found class $className in {$classes[$className]}\n";
+					return $classes[$className];
 				}
 			}
 		}
@@ -199,14 +206,6 @@ class Thrive_ClassLocator
 
 	protected function findClassNamesInFile($filename)
 	{	
-		static $foundClasses;
-		
-		if (isset($foundClasses[$filename]))
-		{
-			//echo "Found cached classes for $filename.\n";
-			return $foundClasses[$filename];
-		}
-
 		//echo "Searching $filename...\n";
 		$classes = array();
 		$source = file_get_contents($filename);
