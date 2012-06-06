@@ -79,8 +79,15 @@ class Thrive_Autoloader
 		$filename = $this->findClassInMap($className);
 		if (!is_readable($filename))
 		{
-			echo "Error: Could not find file '$filename' for class '$className'.\n";
-			die(1);
+			// Assume stale cache; remove entry.
+			unset($this->classMap[$className]);
+
+			$filename = $this->findClassInMap($className);
+			if (!is_readable($filename))
+			{
+				echo "Error: Could not find file '$filename' for class '$className'.\n";
+				die(1);
+			}
 		}
 
 		include $filename;
