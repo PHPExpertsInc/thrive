@@ -1,0 +1,68 @@
+CREATE TABLE user (
+	user_id INTEGER PRIMARY KEY AUTOINCREMENT,
+	first_name VARCHAR(100) NOT NULL,
+	middle_initial VARCHAR(100) NOT NULL DEFAULT '',
+	last_name VARCHAR(100) NOT NULL,
+	email_address VARCHAR(200) NOT NULL UNIQUE,
+	status VARCHAR(8) NOT NULL DEFAULT 'Active' CHECK(status IN ('Active', 'Inactive', 'Pending')),
+	times_logged_in INTEGER NOT NULL DEFAULT 0,
+	date_created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	birthday DATE,
+	time_of_last_login TIME,
+	is_validated BOOLEAN NOT NULL DEFAULT FALSE,
+	hashed_password VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE "group" (
+	group_id INTEGER PRIMARY KEY AUTOINCREMENT,
+	name VARCHAR(255) NOT NULL UNIQUE,
+	group_leader INTEGER REFERENCES user(user_id) ON UPDATE CASCADE ON DELETE CASCADE,
+	group_founder INTEGER REFERENCES user(user_id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE users_groups (
+	user_id INTEGER NOT NULL REFERENCES user(user_id) ON UPDATE CASCADE ON DELETE CASCADE,
+	group_id INTEGER NOT NULL REFERENCES "group"(group_id) ON UPDATE CASCADE ON DELETE CASCADE,
+	PRIMARY KEY(user_id, group_id)
+);
+
+CREATE TABLE popular_artists (
+	artist_id INTEGER PRIMARY KEY AUTOINCREMENT,
+	name VARCHAR(255) NOT NULL UNIQUE
+);
+
+CREATE TABLE records (
+	album_id INTEGER PRIMARY KEY AUTOINCREMENT,
+	name VARCHAR(255) NOT NULL,
+	year_released INTEGER NOT NULL,
+	msrp DECIMAL(10,2) NOT NULL,
+	genre VARCHAR(100) NOT NULL DEFAULT '',
+	artist_id INTEGER NOT NULL REFERENCES popular_artists(artist_id) ON UPDATE CASCADE ON DELETE CASCADE,
+	UNIQUE (artist_id, name)
+);
+
+CREATE TABLE songs (
+	song_id INTEGER PRIMARY KEY AUTOINCREMENT,
+	name VARCHAR(255) NOT NULL,
+	length TIME NOT NULL,
+	album_id INTEGER NOT NULL REFERENCES records(album_id) ON UPDATE CASCADE ON DELETE CASCADE,
+	track_number INTEGER NOT NULL,
+	UNIQUE(track_number, album_id)
+);
+
+CREATE TABLE owns_on_cd (
+	user_id INTEGER REFERENCES user(user_id) ON UPDATE CASCADE ON DELETE CASCADE,
+	album_id INTEGER REFERENCES records(album_id) ON UPDATE CASCADE ON DELETE CASCADE,
+	PRIMARY KEY(user_id, album_id)
+);
+
+CREATE TABLE owns_on_tape (
+	user_id INTEGER REFERENCES user(user_id) ON UPDATE CASCADE ON DELETE CASCADE,
+	album_id INTEGER REFERENCES records(album_id) ON UPDATE CASCADE ON DELETE CASCADE,
+	PRIMARY KEY(user_id, album_id)
+);
+
+CREATE TABLE blobs (
+	blob_id INTEGER PRIMARY KEY,
+	data BLOB NOT NULL
+);
