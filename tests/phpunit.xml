@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<phpunit backupGlobals="true"
+         bootstrap="bootstrap.inc.php"
+         colors="false"
+         convertErrorsToExceptions="true"
+         convertWarningsToExceptions="true"
+         forceCoversAnnotation="false"
+         mapTestClassNameToCoveredClassName="true"
+         processIsolation="false"
+         stopOnError="false"
+         stopOnFailure="false"
+         stopOnIncomplete="false"
+         stopOnSkipped="false"
+         syntaxCheck="true"
+         testSuiteLoaderClass="PHPUnit_Runner_StandardTestSuiteLoader"
+         strict="true"
+         verbose="false">
+	<testsuites>
+		<testsuite name="Thrive Test Suite">
+			<directory>.</directory>
+		</testsuite>
+	</testsuites>
+	<filter>
+		<blacklist>
+			<directory>./flourish</directory>
+		</blacklist>
+	</filter>
+</phpunit>
+

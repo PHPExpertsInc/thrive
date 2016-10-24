@@ -2,8 +2,8 @@
 // This file is a part of the Thrive Framework, a PHPExperts.pro Project.
 //
 // Copyright (c) 2012 PHP Experts, Inc.
-// Author: Theodore R.Smith (theodore@phpexperts.pro)
-//         http://users.phpexperts.pro/tsmith/
+//     Author: Theodore R. Smith (theodore@phpexperts.pro)
+//             http://users.phpexperts.pro/tsmith/
 // Provided by the PHP University (www.phpu.cc) and PHPExperts.pro (www.phpexperts.pro)
 //
 // This file is dually licensed under the terms of the following licenses:
@@ -28,15 +28,30 @@
 //             PHPExperts.pro (www.phpexperts.pro).", wherever you list contributors.
 //   * See LICENSE.cc_by for complete details.
 
-class Thrive_URL_Exception extends Thrive_PrettyException
+class Thrive_FileSystemException extends fUnexpectedException {}
+
+class Thrive_FileSystem
 {
-	const MISSING_CURL = "The cURL PHP extension must be enabled in order to use WebPageStats.";
-	const MISSING_URL = "A URL has not been supplied or set.";
-	const INVALID_URL = "The URL '%s' is not valid.";
-	const BLANK_URL = "The URL '%s' contained no data. It is probably invalid.";
-	const CONNECTION_TIMED_OUT = "The connection timed out.";
-	const FILE_NOT_FOUND = "404: '%s' could not be found.";
-	const NOT_ACCESSIBLE = "%d: '%s' is not currently accessible.";
-	const PERMISSION_DENIED = "Permission denied.";
+	public static function ensureFileIsEditable($filename)
+	{
+		// Make sure the directory exists.
+		$dirname = dirname($filename);
+		if (!file_exists($dirname))
+		{
+			throw new Thrive_FileSystemException("The directory $dirname does not exist.");
+		}
+
+		// And is writable.
+		if (!is_writable($dirname))
+		{
+			throw new Thrive_FileSystemException("The directory $dirname is not writable.");
+		}
+
+		// Make sure the file is writable if it already exists.
+		if (file_exists($filename) && is_writable($filename))
+		{
+			throw new Thrive_FileSystemException("The file $filename exists but is not writable.");
+		}
+	}
 }
 

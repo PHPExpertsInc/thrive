@@ -27,8 +27,6 @@
 //             PHPExperts.pro (www.phpexperts.pro).", wherever you list contributors.
 //   * See LICENSE.cc_by for complete details.
 
-require_once realpath(dirname(__FILE__) . '/../BitPrefs.php');
-
 class TestableBitPrefs extends Thrive_BitPrefs
 {
 	public function getPrefs()

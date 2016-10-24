@@ -43,8 +43,10 @@ class Thrive_Autoloader
 	/** @var string[] **/
 	protected $classMap;
 
-	public function __construct(fCache $cacher = null, Thrive_ClassLocator $cloc = null)
+	public function __construct($cwd = '', fCache $cacher = null, Thrive_ClassLocator $cloc = null)
 	{
+		if ($cwd == '') { $cwd = getcwd(); }
+
 		if (self::$instantiated !== false) return self::$instantiated;
 
 		if ($cacher === null)
@@ -53,13 +55,14 @@ class Thrive_Autoloader
 			//echo "Automap file: " . $this->getAutoMapFilename() . "\n";
 		}
 
-		if ($cloc === null) { $cloc = new Thrive_ClassLocator; }
+		if ($cloc === null) { $cloc = new Thrive_ClassLocator($cwd); }
 
 		$this->cacher = $cacher;
 		$this->cloc = $cloc;
 		$this->classMap = $this->cacher->get('classMap');
 
 		spl_autoload_register(array($this, 'autoload'));
+		$this->cwd = $cmd;
 
 		self::$instantiated = $this;
 	}
@@ -121,6 +124,12 @@ class Thrive_Autoloader
 
 class Thrive_ClassLocator
 {
+	protected $cwd;
+	public function __construct($cwd)
+	{
+		$this->cwd = $cwd;
+	}
+
 	public function findClassFile($className)
 	{
 		//echo "Searching for $className's file...\n";
@@ -136,7 +145,7 @@ class Thrive_ClassLocator
 		}
 
 		// Search the current working directory second.
-		if (($filename = $this->searchFilesystemForClass($className, getcwd())) !== false)
+		if (($filename = $this->searchFilesystemForClass($className, $this->cwd)) !== false)
 		{
 			return $filename;
 		}
@@ -184,7 +193,16 @@ class Thrive_ClassLocator
 			$basename = $it->getFilename();
 			if ($fileinfo->isDir() || $basename[0] == '.') { continue; }
 
-			if ($fileinfo->getExtension() == 'php')
+			if (method_exists($fileinfo, 'getExtension'))
+			{
+				$ext = $fileinfo->getExtension();
+			}
+			else
+			{
+				$ext = pathinfo($basename, PATHINFO_EXTENSION);
+			}
+
+			if ($ext == 'php')
 			{
 				//echo "Searching for class $className in $filename...\n";
 				$foundClasses = $this->findClassNamesInFile($filename);

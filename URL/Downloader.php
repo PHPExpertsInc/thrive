@@ -68,6 +68,23 @@ class Thrive_URL_Downloader
 	}
 
 	/**
+	 * @param $ch
+	 * @return Thrive_Model_URLInfo
+	 */
+	protected function getUrlInfo($ch)
+	{
+		$d = curl_getinfo($ch);
+		$info = new Thrive_Model_URLInfo;
+		$info->httpCode = $d['http_code'];
+		$info->effectiveURL = $d['url'];
+		$info->contentType = $d['content_type'];
+		$info->size = $d['size_download'];
+		$info->transferTime = $d['total_time'];
+
+		return $info;
+	}
+
+	/**
 	 * @param $url string
 	 * @throws Thrive_URL_Exception
 	 * @return Thrive_Model_URLContent
@@ -75,7 +92,10 @@ class Thrive_URL_Downloader
 	public function fetch($url)
 	{
 		// Make sure the URL is valid.
-		self::ensureValidURL($url);
+		if (!self::isURLValid($url))
+		{
+			throw new Thrive_URL_Exception(Thrive_URL_Exception::INVALID_URL, array($url));
+		}
 
 		$ch = curl_init();
 		curl_setopt_array($ch, array(CURLOPT_URL => $url,
@@ -86,20 +106,37 @@ class Thrive_URL_Downloader
 		);
 
 		$data = curl_exec($ch);
-		curl_close($ch);
 
 		if ($data === false || is_null($data) || $data == '')
 		{
 			throw new Thrive_URL_Exception(Thrive_URL_Exception::BLANK_URL, array($url));
 		}
 
-		// TODO: Need to handle HTTP error messages, such as 404 and 502.
+		$info = $this->getUrlInfo($ch);
+		curl_close($ch);
+
+		if ($info->httpCode == 401)
+		{
+			throw new Thrive_URL_Exception(Thrive_URL_Exception::PERMISSION_DENIED);
+		}
+
+		if ($info->httpCode == 404)
+		{
+			throw new Thrive_URL_Exception(Thrive_URL_Exception::FILE_NOT_FOUND, array($url));
+		}
+
+		if (in_array($info->httpCode, array(400, 402, 403, 500, 501, 502, 503)))
+		{
+			throw new Thrive_URL_Exception(Thrive_URL_Exception::NOT_ACCESSIBLE, array($info->httpCode, $url));
+		}
 
 		$urlContent = new Thrive_Model_URLContent;
 		$urlContent->url = $url;
 		$urlContent->headers = $this->headers;
+		$urlContent->info = $info;
 		$urlContent->content = $data;
 
 		return $urlContent;
 	}
 }
+
